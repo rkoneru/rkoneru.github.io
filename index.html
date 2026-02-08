@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0b5f3b">
+    <meta name="description" content="Troop 242 GrubMaster - Camping Food Planner">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon.png">
+    <title>Troop 242 GrubMaster</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <section id="landing-page" class="landing-page">
+        <div class="landing-hero">
+            <div class="landing-brand">Troop 242</div>
+            <h1 class="landing-title"><span>Grub</span>Master</h1>
+            <p class="landing-subtitle">Elevate your scouting adventures with professional meal plans and interactive shopping checklists.</p>
+            <!--button class="btn btn-primary landing-cta" id="get-started-btn">Get Started</button>-->
+        </div>
+        <div class="landing-login card">
+            <p class="landing-login-note">Sign in to access the GrubMaster OS - Food Planner.</p>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="login-name">Name</label>
+                    <input type="text" id="login-name" placeholder="Full name" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Passcode</label>
+                    <input type="password" id="login-password" placeholder="Troop passcode" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Enter</button>
+                <p class="login-error" id="login-error" aria-live="polite"></p>
+            </form>
+        </div>
+    </section>
+
+    <div id="app-shell" class="app-container hidden">
+        <!-- Header -->
+        <header class="app-header">
+            <h1>🏕️ Troop 242 GrubMaster</h1>
+            <p class="subtitle">Plan, Shop, Cook, Track</p>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="bottom-nav">
+            <button class="nav-btn active" data-page="planner">
+                <span class="nav-icon">📋</span>
+                <span>Planner</span>
+            </button>
+            <button class="nav-btn" data-page="recipes">
+                <span class="nav-icon">🍳</span>
+                <span>Recipes</span>
+            </button>
+            <button class="nav-btn" data-page="auditor">
+                <span class="nav-icon">🧾</span>
+                <span>Receipts</span>
+            </button>
+            <button class="nav-btn" data-page="settings">
+                <span class="nav-icon">⚙️</span>
+                <span>Settings</span>
+            </button>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            
+            <!-- FOOD PLANNER PAGE -->
+            <section id="planner-page" class="page active">
+                <div class="page-header">
+                    <h2>Food Planner</h2>
+                    <button class="btn btn-secondary logout-btn" id="logout-btn">Log Out</button>
+                </div>
+                
+                <div class="card">
+                    <h3>Trip Details</h3>
+                    <form id="trip-form">
+                         <div class="form-row">
+                        <div class="form-group">
+                            <label for="trip-name">Trip Name</label>
+                            <input type="text" id="trip-name" placeholder="e.g., Summer Camp 2026" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="camp-name">Camp Name</label>
+                            <input type="text" id="camp-name" placeholder="e.g., Camp Site" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="num-scouts">Number of Scouts</label>
+                            <input type="number" id="num-scouts" min="1" value="6" required>
+                        </div>
+                         <div class="form-group">
+                            <label for="cost-per-scout">Cost per Scout</label>
+                            <input type="number" id="cost-per-scout" min="1" value="15.00" step="0.01" required>
+                        </div>
+                            <div class="form-group">
+                                <label for="start-date">Start Date</label>
+                                <input type="date" id="start-date" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="end-date">End Date</label>
+                                <input type="date" id="end-date" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="meals-per-day">Meals Per Day</label>
+                            <select id="meals-per-day">
+                                <option value="2">2 (☕ Breakfast, 🔥 Dinner)</option>
+                                <option value="3">3 (☕ Breakfast, 🍽️ Lunch, 🔥 Dinner)</option>
+                                <option value="4" selected>4 (☕ Breakfast, 🍽️ Lunch, 🔥 Dinner, 🍪 Cracker Barrel)</option>
+                            </select>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary">🤖 Auto-Generate</button>
+                    </form>
+                </div>
+
+                <div id="meal-plan-container" class="hidden">
+                    <div class="card">
+                        <h3>Meal Plan</h3>
+                        <div id="meal-plan-content"></div>
+                        
+                        <div class="meal-day">
+                            <div class ="shopping-summary">
+                            <h4>🛒 Shopping List Summary</h4>
+                            <div id="shopping-summary"></div>
+                            <div class="total-cost">
+                                <strong>Estimated Total Cost:</strong> <span id="total-cost">$0.00</span>
+                                <small>($<span id="per-scout-cost">0.00</span> per scout)</small>
+                            </div>
+                            
+                            </div>
+                        </div>
+                        
+                        <div class="action-buttons">
+                            <button class="btn btn-secondary" id="export-shopping-list">📥 Export Shopping List</button>
+                            <button class="btn btn-primary" id="save-plan">💾 Save Plan</button>
+                             <button class="btn btn-primary" id="done-planning">✅ Finish Planning</button>
+                       
+                        </div>
+                    </div>
+                </div>
+                <div id="done-plans" class="card">
+                    <h3>Finished Plans</h3>
+                    <div id="done-plans-list"></div>
+                </div>
+                <div id="saved-plans" class="card">
+                    <h3>Saved Plans</h3>
+                    <div id="saved-plans-list"></div>
+                </div>
+
+               
+            </section>
+
+            <!-- RECIPES PAGE -->
+            <section id="recipes-page" class="page">
+                <h2>Recipe Library</h2>
+                
+                <div class="search-bar">
+                    <input type="text" id="recipe-search" placeholder="🔍 Search recipes...">
+                    <select id="recipe-filter">
+                        <option value="all">All Meals</option>
+                        <option value="breakfast">Breakfast</option>
+                        <option value="lunch">Lunch</option>
+                        <option value="dinner">Dinner</option>
+                        <option value="snack">Cracker Barrel</option>
+                        <option value="dessert">Dessert</option>
+                    </select>
+                </div>
+
+                <button class="btn btn-primary" id="add-recipe-btn">➕ Add Custom Recipe</button>
+
+                <div id="recipes-container"></div>
+            </section>
+
+            <!-- RECEIPT AUDITOR PAGE -->
+            <section id="auditor-page" class="page">
+                <h2>Receipt Auditor</h2>
+                
+                <div class="card">
+                    <h3>Select Completed Trip to Audit</h3>
+                    <select id="audit-trip-select">
+                        <option value="">-- Select a Completed trip --</option>
+                    </select>
+                </div>
+
+                <div id="audit-container" class="hidden">
+                    <div class="card">
+                        <h3>Planned vs Actual Costs</h3>
+                        <div id="cost-comparison"></div>
+                    </div>
+
+                    <div class="card" id="receipt-card">
+                        <div class="card-header">
+                            <h3>Add Receipt</h3>
+                            <button type="button" class="btn btn-secondary btn-small" id="toggle-receipt-card">Minimize</button>
+                        </div>
+                        <div class="card-body">
+                            <form id="receipt-form">
+                            <div class="form-group">
+                                <label for="receipt-store">Store Name</label>
+                                <input type="text" id="receipt-store" placeholder="e.g., Walmart" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="receipt-date">Purchase Date</label>
+                                <input type="date" id="receipt-date" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="receipt-amount">Total Amount</label>
+                                <input type="number" id="receipt-amount" step="0.01" min="0" placeholder="0.00" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="receipt-notes">Notes (optional)</label>
+                                <textarea id="receipt-notes" placeholder="Any additional details..."></textarea>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary">Add Receipt</button>
+                        </form>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>Receipts</h3>
+                        <div id="receipts-list"></div>
+                    </div>
+
+                    <div class="card insights">
+                        <h3>💡 Insights & Suggestions</h3>
+                        <div id="insights-content"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SETTINGS PAGE -->
+            <section id="settings-page" class="page">
+                <h2>Settings</h2>
+                
+                <div class="card">
+                    <h3>Troop Information</h3>
+                    <div class="form-group">
+                        <label for="troop-name">Troop Name</label>
+                        <input type="text" id="troop-name" value="Troop 242">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="default-scouts">Default Number of Scouts</label>
+                        <input type="number" id="default-scouts" min="1" value="6">
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Budget Settings</h3>
+                    <div class="form-group">
+                        <label for="target-cost">Target Cost Per Scout Per Day</label>
+                        <input type="number" id="target-cost" step="0.50" min="0" value="5.00">
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Data Management</h3>
+                    <button class="btn btn-secondary" id="export-data">📤 Export All Data</button>
+                    <button class="btn btn-secondary" id="import-data">📥 Import Data</button>
+                    <input type="file" id="import-file" accept=".json" style="display: none;">
+                    <button class="btn btn-danger" id="clear-data">🗑️ Clear All Data</button>
+                </div>
+
+                <div class="card">
+                    <h3>About</h3>
+                    <p><strong>Troop 242 GrubMaster</strong></p>
+                    <p>Version 1.0.0</p>
+                    <p>A camping food planner for Scout troops</p>
+                    <button class="btn btn-secondary" id="install-app">📲 Install App</button>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Recipe Modal -->
+    <div id="recipe-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div id="recipe-detail"></div>
+        </div>
+    </div>
+
+    <!-- Add Recipe Modal -->
+    <div id="add-recipe-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3>Add Custom Recipe</h3>
+            <form id="custom-recipe-form">
+                <div class="form-group">
+                    <label for="custom-recipe-name">Recipe Name</label>
+                    <input type="text" id="custom-recipe-name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="custom-recipe-category">Category</label>
+                    <select id="custom-recipe-category" required>
+                        <option value="breakfast">Breakfast</option>
+                        <option value="lunch">Lunch</option>
+                        <option value="dinner">Dinner</option>
+                        <option value="snack">Cracker Barrel</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="custom-recipe-servings">Servings</label>
+                    <input type="number" id="custom-recipe-servings" min="1" value="10" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Ingredients</label>
+                    <div id="custom-ingredients-list"></div>
+                    <button type="button" class="btn btn-secondary" id="add-ingredient-btn">+ Add Ingredient</button>
+                </div>
+                
+                <div class="form-group">
+                    <label for="custom-recipe-instructions">Instructions</label>
+                    <textarea id="custom-recipe-instructions" rows="4" required></textarea>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">Save Recipe</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Done Planning Modal -->
+    <div id="done-planning-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3>Finish Planning</h3>
+            <p>Do you want to export or print the shopping list?</p>
+            <div class="action-buttons">
+                <button type="button" class="btn btn-primary" data-done-action="export">📥 Export</button>
+                <button type="button" class="btn btn-primary" data-done-action="print">🖨️ Print</button>
+                <button type="button" class="btn btn-secondary" data-done-action="cancel">Done</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="recipes.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
