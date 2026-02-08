@@ -1,11 +1,12 @@
 // Service Worker for GrubMaster PWA
 const CACHE_NAME = 'grubmaster-v1';
 const urlsToCache = [
-  '/',
-  '/index.html',
-  '/styles.css',
-  '/app.js',
-  '/manifest.json'
+  './',
+  './index.html',
+  './styles.css',
+  './app.js',
+  './recipes.js',
+  './manifest.json'
 ];
 
 // Install event - cache files
